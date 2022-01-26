@@ -11,7 +11,7 @@ services:
       MONGODB=DATABASE: nest-course
 
   postgres:
-    container_name: postgres
+    container_name: pgindie
     image: postgres
     restart: always
     ports:
@@ -19,11 +19,11 @@ services:
     environment:
       POSTGRES_PASSWORD: pass123
     volumes:
-    - /data/postgres:/data/postgres
+    - /data/pgindie:/data/postgres
     env_file:
     - docker.env
     networks:
-    - postgres
+    - pgindie
 
   test-db:
     container_name: test_db
@@ -35,7 +35,7 @@ services:
       POSTGRES_PASSWORD: pass123
     env_file:
     - docker.env
-
+  
   pgadmin:
     links:
     - postgres:postgres
@@ -48,8 +48,8 @@ services:
     env_file:
     - docker.env
     networks:
-    - postgres
+    - pgindie
 
 networks:
-  postgres:
+  pgindie:
     driver: bridge

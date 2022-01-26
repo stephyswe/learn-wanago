@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './authentication/authentication.module';
 import { DatabaseConnectionService } from './utils/database';
+import { Connection } from 'typeorm';
+import { PostsModule } from './posts/posts.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -13,8 +16,10 @@ import { DatabaseConnectionService } from './utils/database';
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService,
     }),
+    UsersModule,
+    AuthModule,
+    PostsModule,
+    CategoriesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

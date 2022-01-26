@@ -10,7 +10,6 @@ export class DatabaseConnectionService implements TypeOrmOptionsFactory {
       synchronize: true,
       host: 'localhost',
       port: 5432,
-      logging: false,
       dropSchema: false,
       username: 'postgres',
       password: 'pass123',
