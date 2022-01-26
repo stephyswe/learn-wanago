@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import PublicFile from '../files/publicFile.entity';
 import Post from '../posts/post.entity';
+import PrivateFile from '../privateFiles/privateFile.entity';
 import { Address } from './address.entity';
 
 export enum UserRole {
@@ -55,6 +56,9 @@ class User {
     nullable: true,
   })
   public avatar?: PublicFile;
+
+  @OneToMany(() => PrivateFile, (file: PrivateFile) => file.owner)
+  public files?: PrivateFile[];
 }
 
 export default User;
