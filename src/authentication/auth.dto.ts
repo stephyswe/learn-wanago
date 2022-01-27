@@ -1,5 +1,6 @@
 import User from '../users/user.entity';
 import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { Request } from 'express';
 
 export class RegisterDto {
   @IsEmail()
@@ -22,7 +23,7 @@ export class LogInDto {
   password: string;
 }
 
-export interface RequestWithUser {
+export interface RequestWithUser extends Request {
   user: User;
 }
 

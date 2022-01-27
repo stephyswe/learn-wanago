@@ -5,6 +5,7 @@ import User from './user.entity';
 import { CreateUserDto } from './create-user.dto';
 import { FilesService } from '../files/files.service';
 import { PrivateFilesService } from '../privateFiles/privateFiles.service';
+import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +38,29 @@ export class UsersService {
     const user = await this.userRepository.findOne({ email });
     if (!user) throw new NotFoundException('User with this email does not exist');
     return user;
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
+    const currentHashedRefreshToken = await bcryptjs.hash(refreshToken, 10);
+    await this.userRepository.update(userId, {
+      currentHashedRefreshToken,
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+    const user = await this.getById(userId);
+
+    const isRefreshTokenMatching = await bcryptjs.compare(refreshToken, user.currentHashedRefreshToken);
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.userRepository.update(userId, {
+      currentHashedRefreshToken: null,
+    });
   }
 
   async addAvatar(userId: number, imageBuffer: Buffer, filename: string) {
