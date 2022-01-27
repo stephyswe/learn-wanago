@@ -28,6 +28,11 @@ export default class PostsService {
     throw new PostNotFoundException(id);
   }
 
+  async getPostsWithParagraph(paragraph: string) {
+    return this.postsRepository
+      .query('SELECT * from post WHERE $1 = ANY(paragraphs)', [paragraph]);
+  }
+
   async createPost(post: CreatePostDto, user: User) {
     const newPost = await this.postsRepository.create({
       ...post,
