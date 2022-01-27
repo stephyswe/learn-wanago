@@ -1,6 +1,12 @@
-import { Injectable, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotAcceptableException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import User from './user.entity';
 import { CreateUserDto } from './create-user.dto';
 import { FilesService } from '../files/files.service';
@@ -14,6 +20,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     private readonly filesService: FilesService,
     private readonly privateFilesService: PrivateFilesService,
+    private connection: Connection,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -81,13 +88,24 @@ export class UsersService {
     await this.deleteUserAvatar(user);
   }
   async deleteUserAvatar(user: User) {
+    const queryRunner = this.connection.createQueryRunner();
     const fileId = user.avatar?.id;
     if (fileId) {
-      await this.userRepository.update(user.id, {
-        ...user,
-        avatar: null,
-      });
-      await this.filesService.deletePublicFile(fileId);
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try {
+        await this.userRepository.update(user.id, {
+          ...user,
+          avatar: null,
+        });
+        await this.filesService.deletePublicFileWithQueryRunner(fileId, queryRunner);
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw new InternalServerErrorException();
+      } finally {
+        await queryRunner.release();
+      }
     }
   }
 
