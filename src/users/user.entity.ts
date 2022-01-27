@@ -4,10 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import PublicFile from '../files/publicFile.entity';
 import Post from '../posts/post.entity';
@@ -65,6 +67,10 @@ class User {
   })
   @Exclude()
   public currentHashedRefreshToken?: string;
+
+  @Index()
+  @ManyToOne(() => User, (author: User) => author.posts)
+  public author?: User
 }
 
 export default User;

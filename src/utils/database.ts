@@ -13,7 +13,7 @@ export class DatabaseConnectionService implements TypeOrmOptionsFactory {
       dropSchema: false,
       username: 'postgres',
       password: 'pass123',
-      database: 'postgres',
+      database: 'pgindie',
       entities: ['dist/**/*.entity.js'],
       migrations: ['dist/migrations/*.js'],
     };

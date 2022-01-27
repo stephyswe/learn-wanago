@@ -10,7 +10,7 @@ services:
     environment:
       MONGODB=DATABASE: nest-course
 
-  postgres:
+  pgindie:
     container_name: pgindie
     image: postgres
     restart: always
@@ -38,15 +38,16 @@ services:
   
   pgadmin:
     links:
-    - postgres:postgres
+    - pgindie:pgindie
     container_name: pgadmin
     image: dpage/pgadmin4
     ports:
     - "8080:80"
     volumes:
     - /data/pgadmin:/root/.pgadmin
-    env_file:
-    - docker.env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     networks:
     - pgindie
 
