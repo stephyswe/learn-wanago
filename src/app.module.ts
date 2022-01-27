@@ -7,6 +7,7 @@ import { DatabaseConnectionService } from './utils/database';
 import { PostsModule } from './posts/posts.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SearchModule } from './search/search.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SearchModule } from './search/search.module';
     PostsModule,
     CategoriesModule,
     SearchModule,
+    SubscribersModule
   ],
 })
 export class AppModule {}
