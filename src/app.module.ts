@@ -1,12 +1,12 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './authentication/authentication.module';
 import { DatabaseConnectionService } from './utils/database';
-import { Connection } from 'typeorm';
 import { PostsModule } from './posts/posts.module';
 import { CategoriesModule } from './categories/categories.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { CategoriesModule } from './categories/categories.module';
     AuthModule,
     PostsModule,
     CategoriesModule,
+    SearchModule,
   ],
 })
 export class AppModule {}
