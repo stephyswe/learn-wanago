@@ -16,8 +16,20 @@ export default class PostsService {
     private postsSearchService: PostsSearchService,
   ) {}
 
-  getAllPosts() {
-    return this.postsRepository.find({ relations: ['author'] });
+  async getAllPosts(offset?: number, limit?: number) {
+    const [items, count] = await this.postsRepository.findAndCount({
+      relations: ['author'],
+      order: {
+        id: 'ASC',
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    return {
+      items,
+      count,
+    };
   }
 
   async getPostById(id: number) {
@@ -29,29 +41,35 @@ export default class PostsService {
   }
 
   async getPostsWithParagraph(paragraph: string) {
-    return this.postsRepository
-      .query('SELECT * from post WHERE $1 = ANY(paragraphs)', [paragraph]);
+    return this.postsRepository.query('SELECT * from post WHERE $1 = ANY(paragraphs)', [paragraph]);
   }
 
   async createPost(post: CreatePostDto, user: User) {
     const newPost = await this.postsRepository.create({
       ...post,
-      author: user
+      author: user,
     });
     await this.postsRepository.save(newPost);
     // this.postsSearchService.indexPost(newPost);
     return newPost;
   }
 
-  async searchForPosts(text: string) {
-    const results = await this.postsSearchService.search(text);
+  async searchForPosts(text: string, offset?: number, limit?: number) {
+    const { results, count } = await this.postsSearchService.search(text, offset, limit);
     const ids = results.map((result) => result.id);
     if (!ids.length) {
-      return [];
+      return {
+        items: [],
+        count,
+      };
     }
-    return this.postsRepository.find({
+    const items = await this.postsRepository.find({
       where: { id: In(ids) },
     });
+    return {
+      items,
+      count,
+    };
   }
 
   async updatePost(id: number, post: UpdatePostDto) {
