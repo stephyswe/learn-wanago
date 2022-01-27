@@ -1,0 +1,3 @@
+[submodule "nestjs-microservice-subs"]
+	path = nestjs-microservice-subs
+	url = https://github.com/stephyswe/nestjs-microservice-subs
