@@ -7,33 +7,32 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Inject,
+  OnModuleInit,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../authentication/guard/jwt.guard';
 import CreateSubscriberDto from './dto/createSubscriber.dto';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientGrpc } from '@nestjs/microservices';
+import SubscribersService from './subscribers.service.interface';
 
 @Controller('subscribers')
 @UseInterceptors(ClassSerializerInterceptor)
-export default class SubscribersController {
-  constructor(@Inject('SUBSCRIBERS_SERVICE') private subscribersService: ClientProxy) {}
+export default class SubscribersController implements OnModuleInit {
+  private subscribersService: SubscribersService;
+
+  constructor(@Inject('SUBSCRIBERS_PACKAGE') private client: ClientGrpc) {}
+
+  onModuleInit() {
+    this.subscribersService = this.client.getService<SubscribersService>('SubscribersService');
+  }
+
   @Get()
   async getSubscribers() {
-    return this.subscribersService.send(
-      {
-        cmd: 'get-all-subscribers',
-      },
-      '',
-    );
+    return this.subscribersService.getAllSubscribers({});
   }
 
   @Post()
   @UseGuards(JwtAuthGuard)
   async createPost(@Body() subscriber: CreateSubscriberDto) {
-    return this.subscribersService.send(
-      {
-        cmd: 'add-subscriber',
-      },
-      subscriber,
-    );
+    return this.subscribersService.addSubscriber(subscriber);
   }
 }
