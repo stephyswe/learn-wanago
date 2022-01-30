@@ -16,10 +16,8 @@ import { ClientProxy } from '@nestjs/microservices';
 @UseInterceptors(ClassSerializerInterceptor)
 export default class SubscribersController {
   constructor(@Inject('SUBSCRIBERS_SERVICE') private subscribersService: ClientProxy) {}
-
   @Get()
-  @UseGuards(JwtAuthGuard)
-  getSubscribers() {
+  async getSubscribers() {
     return this.subscribersService.send(
       {
         cmd: 'get-all-subscribers',
@@ -31,12 +29,11 @@ export default class SubscribersController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async createPost(@Body() subscriber: CreateSubscriberDto) {
-    this.subscribersService.emit(
+    return this.subscribersService.send(
       {
         cmd: 'add-subscriber',
       },
       subscriber,
     );
-    return 'added user';
   }
 }
