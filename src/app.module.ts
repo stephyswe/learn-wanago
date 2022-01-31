@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './authentication/authentication.module';
 import { DatabaseConnectionService } from './utils/database';
@@ -11,9 +12,11 @@ import { SubscribersModule } from './subscribers/subscribers.module';
 import { CommentsModule } from './comments/comments.module';
 import { ProductCategoriesModule } from './productCategories/productCategories.module';
 import { ProductsModule } from './products/products.module';
+import { EmailScheduleModule } from './emailSchedule/emailSchedule.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -28,7 +31,8 @@ import { ProductsModule } from './products/products.module';
     SubscribersModule,
     CommentsModule,
     ProductCategoriesModule,
-    ProductsModule
+    ProductsModule,
+    EmailScheduleModule,
   ],
 })
 export class AppModule {}

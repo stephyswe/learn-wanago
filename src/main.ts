@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
-import { ExcludeNullInterceptor } from './utils/excludeNull.interceptor';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'aws-sdk';
 
