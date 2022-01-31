@@ -22,10 +22,17 @@ async function bootstrap() {
 }
 bootstrap();
 
-// restart Docker and start app
-// docker rm -f $(docker ps -a -q) && docker-compose up -d && npm start dev
-
-/*
+/* Docker
+restart Docker and start app
+docker rm -f $(docker ps -a -q) && docker-compose up -d && npm start dev
 docker ps
 docker inspect <container id> | grep "IPAddress"
-*/
+
+
+Elastic Search Fix!
+for windows users, using wsl subsystem
+open powershell run
+wsl -d docker-desktop
+then
+sysctl -w vm.max_map_count=262144
+`*/
