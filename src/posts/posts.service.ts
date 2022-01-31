@@ -33,7 +33,7 @@ export default class PostsService {
   }
 
   async getPostById(id: number) {
-    const post = await this.postsRepository.findOne(id, { relations: ['author'] });
+    const post = await this.postsRepository.findOne(id, { relations: ['author', 'categories', 'comments'] });
     if (post) {
       return post;
     }
