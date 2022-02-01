@@ -37,7 +37,7 @@ export default class PostsService {
     }
 
     const [items, count] = await this.postsRepository.findAndCount({
-      relations: ['author'],
+      relations: ['author', 'comments'],
       order: {
         id: 'ASC',
       },

@@ -8,8 +8,8 @@ import { RegisterDto, TokenPayload } from './auth.dto';
 @Injectable()
 export class AuthenticationService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -60,6 +60,15 @@ export class AuthenticationService {
       return user;
     } catch (error) {
       throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  public async getUserFromAuthenticationToken(token: string) {
+    const payload: TokenPayload = this.jwtService.verify(token, {
+      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET')
+    });
+    if (payload.userId) {
+      return this.usersService.getById(payload.userId);
     }
   }
 
