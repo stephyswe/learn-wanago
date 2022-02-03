@@ -67,10 +67,6 @@ class User {
   })
   @Exclude()
   public currentHashedRefreshToken?: string;
-
-  @Index()
-  @ManyToOne(() => User, (author: User) => author.posts)
-  public author?: User
 }
 
 export default User;

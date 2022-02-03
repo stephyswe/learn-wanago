@@ -11,6 +11,7 @@ type Post {
   id: Int!
   title: String!
   paragraphs: [String!]!
+  authorId: Int!
 }
 
 type Query {
@@ -19,15 +20,9 @@ type Query {
 
 type Mutation {
   login(input: CreateLoginInput!): Login!
-  createPost(input: CreatePostInput!): Post!
 }
 
 input CreateLoginInput {
   email: String!
   password: String!
-}
-
-input CreatePostInput {
-  title: String!
-  paragraphs: [String!]!
 }

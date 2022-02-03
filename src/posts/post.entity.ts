@@ -1,4 +1,14 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, ManyToOne, PrimaryGeneratedColumn, Index } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Index,
+  RelationId,
+} from 'typeorm';
 import User from '../users/user.entity';
 import Category from '../categories/category.entity';
 import Comment from '../comments/comment.entity';
@@ -20,6 +30,9 @@ class Post {
   @Index('post_authorId_index')
   @ManyToOne(() => User, (author: User) => author.posts)
   public author?: User;
+
+  @RelationId((post: Post) => post.author)
+  public authorId: number;
 
   @ManyToMany(() => Category, (category: Category) => category.posts)
   @JoinTable()

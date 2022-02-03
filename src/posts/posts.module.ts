@@ -8,6 +8,7 @@ import { SearchModule } from '../search/search.module';
 import PostsSearchService from './postsSearch.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostsResolver } from './posts.resolver';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PostsResolver } from './posts.resolver';
     }),
     TypeOrmModule.forFeature([Post]),
     SearchModule,
+    UsersModule,
   ],
   controllers: [PostsController],
   providers: [PostsService, PostsSearchService, PostsResolver],
