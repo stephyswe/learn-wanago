@@ -9,6 +9,7 @@ import PostsSearchService from './postsSearch.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostsResolver } from './posts.resolver';
 import { UsersModule } from '../users/users.module';
+import PostsLoaders from './loaders/posts.loaders';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsSearchService, PostsResolver],
+  providers: [PostsService, PostsSearchService, PostsResolver, PostsLoaders],
 })
 export class PostsModule {}

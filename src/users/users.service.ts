@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Connection } from 'typeorm';
+import { Repository, Connection, In } from 'typeorm';
 import User from './user.entity';
 import { CreateUserDto } from './create-user.dto';
 import { FilesService } from '../files/files.service';
@@ -27,6 +27,12 @@ export class UsersService {
     const user = await this.userRepository.findOne({ email });
     if (!user) throw new NotFoundException('User with this email does not exist');
     return user;
+  }
+
+  async getByIds(ids: number[]) {
+    return this.userRepository.find({
+      where: { id: In(ids) },
+    });
   }
 
   async getById(id: number): Promise<User> {

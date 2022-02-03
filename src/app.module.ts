@@ -24,7 +24,10 @@ import { GraphQLModule } from '@nestjs/graphql';
       useFactory: (configService: ConfigService) => ({
         playground: Boolean(configService.get('GRAPHQL_PLAYGROUND')),
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        context: ({ req, res }) => ({ req, res }),
+        context: ({ req, res }) => ({
+          req,
+          res,
+        }),
       }),
     }),
     ScheduleModule.forRoot(),
