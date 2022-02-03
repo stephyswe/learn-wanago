@@ -9,7 +9,7 @@ import { PrivateFilesModule } from '../privateFiles/privateFiles.module';
 @Module({
   imports: [TypeOrmModule.forFeature([User]), FilesModule, PrivateFilesModule],
   controllers: [UsersController],
-  providers: [UsersService, User],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}

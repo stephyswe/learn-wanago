@@ -23,6 +23,18 @@ export class UsersService {
     private connection: Connection,
   ) {}
 
+  async getByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ email });
+    if (!user) throw new NotFoundException('User with this email does not exist');
+    return user;
+  }
+
+  async getById(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({ id });
+    if (!user) throw new NotFoundException(`no user with id: ${id}`);
+    return user;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const user = this.userRepository.create(createUserDto);
@@ -33,18 +45,6 @@ export class UsersService {
         throw new NotAcceptableException('User with that email already exists');
       }
     }
-  }
-
-  async getById(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ id });
-    if (!user) throw new NotFoundException(`no user with id: ${id}`);
-    return user;
-  }
-
-  async getByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ email });
-    if (!user) throw new NotFoundException('User with this email does not exist');
-    return user;
   }
 
   async setCurrentRefreshToken(refreshToken: string, userId: number) {

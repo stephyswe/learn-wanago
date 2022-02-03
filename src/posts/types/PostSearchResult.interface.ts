@@ -10,4 +10,5 @@ interface PostSearchResult {
     }>;
   };
 }
-export default PostSearchResult;
+
+export default PostSearchResult

@@ -16,6 +16,7 @@ import { join } from 'path';
           options: {
             package: 'subscribers',
             protoPath: join(process.cwd(), 'src/subscribers/subscribers.proto'),
+            url: configService.get('GRPC_CONNECTION_URL'),
           },
         });
       },

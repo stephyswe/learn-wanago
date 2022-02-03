@@ -1,10 +1,6 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { RequestWithUser } from '../authentication/auth.dto';
-import { GraphqlJwtAuthGuard } from '../authentication/guard/gql-jwt.guard';
-import User from '../users/user.entity';
+import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { User } from '../users/model/user.model';
 import { UsersService } from '../users/users.service';
-import { CreatePostInput } from './inputs/post.input';
 import { Post } from './models/post.model';
 import PostsService from './posts.service';
 
@@ -19,9 +15,9 @@ export class PostsResolver {
   }
 
   @ResolveField('author', () => User)
-  async author(@Parent() post: Post) {
+  async getAuthor(@Parent() post: Post) {
     const { authorId } = post;
-    console.log(authorId);
+
     return this.usersService.getById(authorId);
   }
 }

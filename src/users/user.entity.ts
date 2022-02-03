@@ -25,22 +25,22 @@ export enum UserRole {
 @Entity()
 class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @Column({ unique: true })
-  email: string;
+  public email: string;
 
   @Column()
   @Exclude()
-  password: string;
+  public password: string;
 
   @Column()
   @CreateDateColumn()
-  createdAt: Date;
+  public createdAt: Date;
 
   @Column()
   @UpdateDateColumn()
-  updatedAt: Date;
+  public updatedAt: Date;
 
   @OneToOne(() => Address, {
     eager: true,
