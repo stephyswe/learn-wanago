@@ -34,6 +34,7 @@ export default class PostsController {
   @CacheKey(GET_POSTS_CACHE_KEY)
   @CacheTTL(120)
   @Get()
+  @UseGuards(JwtTwoFactorGuard)
   async getPosts(@Query('search') search: string, @Query() { offset, limit, startId }: PaginationParams) {
     if (search) {
       return this.postsService.searchForPosts(search, offset, limit, startId);

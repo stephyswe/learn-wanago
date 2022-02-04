@@ -20,6 +20,8 @@ import { Timestamp } from './utils/scalars/timestamp.scalar';
 import { OptimizeModule } from './optimize/optimize.module';
 import { BullModule } from '@nestjs/bull';
 import { ChargeModule } from './charge/charge.module';
+import { CreditCardsModule } from './credit-cards/creditCards.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -66,6 +68,8 @@ import { ChargeModule } from './charge/charge.module';
     PubSubModule,
     OptimizeModule,
     ChargeModule,
+    CreditCardsModule,
+    SubscriptionsModule
   ],
   providers: [Timestamp],
 })

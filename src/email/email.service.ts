@@ -21,7 +21,6 @@ export default class EmailService {
   }
 
   sendMail(options: Mail.Options) {
-    console.log('opt', options);
     return this.nodemailerTransport.sendMail(options);
   }
 }

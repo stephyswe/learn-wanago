@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { stringify } from 'querystring';
 import Stripe from 'stripe';
+import StripeError from '../utils/stripeError.enum';
 
 @Injectable()
 export default class StripeService {
   private stripe: Stripe;
 
-  constructor(
-    private configService: ConfigService
-  ) {
+  constructor(private configService: ConfigService) {
     this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
       apiVersion: '2020-08-27',
     });
@@ -17,7 +17,7 @@ export default class StripeService {
   public async createCustomer(name: string, email: string) {
     return this.stripe.customers.create({
       name,
-      email
+      email,
     });
   }
 
@@ -27,7 +27,69 @@ export default class StripeService {
       customer: customerId,
       payment_method: paymentMethodId,
       currency: this.configService.get('STRIPE_CURRENCY'),
-      confirm: true
-    })
+      off_session: true,
+      confirm: true,
+    });
+  }
+
+  public async listCustomerCard(paymentMethodId: string) {
+    return this.stripe.paymentMethods.retrieve(paymentMethodId);
+  }
+
+  public async attachCreditCard(paymentMethodId: string, customerId: string) {
+    const customer = await this.stripe.setupIntents.create({
+      customer: customerId,
+      payment_method: paymentMethodId,
+    });
+    return customer;
+  }
+
+  public async setDefaultCreditCard(paymentMethodId: string, customerId: string) {
+    try {
+      return await this.stripe.customers.update(customerId, {
+        invoice_settings: { default_payment_method: paymentMethodId },
+      });
+    } catch (error) {
+      if (error?.type === StripeError.InvalidRequest) {
+        throw new BadRequestException('Wrong credit card chosen');
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  public async listCreditCards(customerId: string) {
+    return this.stripe.paymentMethods.list({
+      customer: customerId,
+      type: 'card',
+    });
+  }
+
+  public async createSubscription(priceId: string, customerId: string) {
+    try {
+      const sum = await this.stripe.subscriptions.create({
+        customer: customerId,
+        items: [
+          {
+            price: priceId,
+          },
+        ],
+        expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
+      });
+      console.log('sum', sum);
+      return sum;
+    } catch (error) {
+      if (error?.code === StripeError.ResourceMissing) {
+        throw new BadRequestException('Credit card not set up');
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  public async listSubscriptions(priceId: string, customerId: string) {
+    return this.stripe.subscriptions.list({
+      customer: customerId,
+      price: priceId,
+      expand: ['data.latest_invoice', 'data.latest_invoice.payment_intent'],
+    });
   }
 }
