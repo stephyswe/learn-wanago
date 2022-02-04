@@ -38,3 +38,7 @@ input CreatePostInput {
   title: String!
   paragraphs: [String!]!
 }
+
+type Subscription {
+  postAdded: Post!
+}

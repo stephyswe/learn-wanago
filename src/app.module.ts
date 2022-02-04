@@ -15,6 +15,7 @@ import { ProductsModule } from './products/products.module';
 import { EmailScheduleModule } from './emailSchedule/emailSchedule.module';
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
+import { PubSubModule } from './pubSub/pubSub.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GraphQLModule } from '@nestjs/graphql';
       useFactory: (configService: ConfigService) => ({
         playground: Boolean(configService.get('GRAPHQL_PLAYGROUND')),
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        installSubscriptionHandlers: true,
         context: ({ req, res }) => ({
           req,
           res,
@@ -47,6 +49,7 @@ import { GraphQLModule } from '@nestjs/graphql';
     ProductCategoriesModule,
     ProductsModule,
     EmailScheduleModule,
+    PubSubModule,
   ],
 })
 export class AppModule {}
