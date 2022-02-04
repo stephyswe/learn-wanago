@@ -30,6 +30,11 @@ export class AuthenticationController {
 
     await this.userService.setCurrentRefreshToken(refreshToken, user.id);
     response.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
+
+    if (user.isTwoFactorAuthenticationEnabled) {
+      return;
+    }
+
     user.password = undefined;
     return response.send(user);
   }

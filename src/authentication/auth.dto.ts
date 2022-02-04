@@ -29,4 +29,5 @@ export interface RequestWithUser extends Request {
 
 export class TokenPayload {
   userId: number;
+  isSecondFactorAuthenticated?: boolean;
 }
