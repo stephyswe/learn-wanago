@@ -1,10 +1,14 @@
 import User from '../users/user.entity';
-import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { Request } from 'express';
 
 export class RegisterDto {
   @IsEmail()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
   @IsNotEmpty()
   @MinLength(7)

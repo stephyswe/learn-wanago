@@ -7,15 +7,15 @@ import { config } from 'aws-sdk';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   app.enableCors({
-    origin: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
+    origin: configService.get('FRONTEND_URL'),
+    credentials: true
   });
+  
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
 
-  const configService = app.get(ConfigService);
   config.update({
     accessKeyId: configService.get('AWS_ACCESS_KEY_ID'),
     secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),

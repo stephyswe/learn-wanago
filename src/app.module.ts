@@ -19,6 +19,7 @@ import { PubSubModule } from './pubSub/pubSub.module';
 import { Timestamp } from './utils/scalars/timestamp.scalar';
 import { OptimizeModule } from './optimize/optimize.module';
 import { BullModule } from '@nestjs/bull';
+import { ChargeModule } from './charge/charge.module';
 
 @Module({
   imports: [
@@ -63,6 +64,8 @@ import { BullModule } from '@nestjs/bull';
     ProductsModule,
     EmailScheduleModule,
     PubSubModule,
+    OptimizeModule,
+    ChargeModule,
   ],
   providers: [Timestamp],
 })

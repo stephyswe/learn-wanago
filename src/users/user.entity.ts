@@ -31,6 +31,9 @@ class User {
   public email: string;
 
   @Column()
+  public name: string;
+
+  @Column()
   @Exclude()
   public password: string;
 
@@ -73,6 +76,9 @@ class User {
 
   @Column({ default: false })
   public isTwoFactorAuthenticationEnabled: boolean;
+
+  @Column()
+  public stripeCustomerId: string;
 }
 
 export default User;

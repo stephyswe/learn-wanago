@@ -5,9 +5,10 @@ import User from './user.entity';
 import { UsersController } from './users.controller';
 import { FilesModule } from '../files/files.module';
 import { PrivateFilesModule } from '../privateFiles/privateFiles.module';
+import { StripeModule } from '../stripe/stripe.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), FilesModule, PrivateFilesModule],
+  imports: [TypeOrmModule.forFeature([User]), FilesModule, PrivateFilesModule, StripeModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

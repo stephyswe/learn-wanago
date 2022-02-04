@@ -12,6 +12,7 @@ import { CreateUserDto } from './create-user.dto';
 import { FilesService } from '../files/files.service';
 import { PrivateFilesService } from '../privateFiles/privateFiles.service';
 import * as bcryptjs from 'bcryptjs';
+import StripeService from '../stripe/stripe.service';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +22,7 @@ export class UsersService {
     private readonly filesService: FilesService,
     private readonly privateFilesService: PrivateFilesService,
     private connection: Connection,
+    private stripeService: StripeService,
   ) {}
 
   async getByEmail(email: string): Promise<User> {
@@ -43,7 +45,8 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const user = this.userRepository.create(createUserDto);
+      const stripeCustomer = await this.stripeService.createCustomer(createUserDto.name, createUserDto.email);
+      const user = this.userRepository.create({ ...createUserDto, stripeCustomerId: stripeCustomer.id });
       await this.userRepository.save(user);
       return user;
     } catch (error) {
@@ -78,13 +81,13 @@ export class UsersService {
 
   async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
     return this.userRepository.update(userId, {
-      twoFactorAuthenticationSecret: secret
+      twoFactorAuthenticationSecret: secret,
     });
   }
 
   async turnOnTwoFactorAuthentication(userId: number) {
     return this.userRepository.update(userId, {
-      isTwoFactorAuthenticationEnabled: true
+      isTwoFactorAuthenticationEnabled: true,
     });
   }
 
