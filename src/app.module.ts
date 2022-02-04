@@ -16,6 +16,7 @@ import { EmailScheduleModule } from './emailSchedule/emailSchedule.module';
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PubSubModule } from './pubSub/pubSub.module';
+import { Timestamp } from './utils/scalars/timestamp.scalar';
 
 @Module({
   imports: [
@@ -51,5 +52,6 @@ import { PubSubModule } from './pubSub/pubSub.module';
     EmailScheduleModule,
     PubSubModule,
   ],
+  providers: [Timestamp],
 })
 export class AppModule {}

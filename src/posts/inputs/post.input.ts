@@ -7,4 +7,7 @@ export class CreatePostInput {
 
   @Field(() => [String])
   paragraphs: string[];
+
+  @Field({ nullable: true })
+  scheduledDate?: Date;
 }
