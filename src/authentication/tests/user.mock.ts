@@ -9,6 +9,7 @@ const mockedUser: User = {
   name: 'something',
   password: 'hash',
   stripeCustomerId: 'stripe_customer_id',
+  phoneNumber: '+48123123123',
   createdAt: new Date(),
   updatedAt: new Date(),
   address: {
@@ -19,6 +20,7 @@ const mockedUser: User = {
   },
   isTwoFactorAuthenticationEnabled: false,
   isEmailConfirmed: false,
+  isPhoneNumberConfirmed: false
 };
 
 export default mockedUser;

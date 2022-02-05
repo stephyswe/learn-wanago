@@ -1,5 +1,5 @@
 import User from '../users/user.entity';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'class-validator';
 import { Request } from 'express';
 
 export class RegisterDto {
@@ -13,6 +13,11 @@ export class RegisterDto {
   @IsNotEmpty()
   @MinLength(7)
   password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\+[1-9]\d{1,14}$/)
+  phoneNumber: string;
 
   @IsOptional()
   address: {};

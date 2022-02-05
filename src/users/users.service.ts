@@ -87,6 +87,15 @@ export class UsersService {
     );
   }
 
+  markPhoneNumberAsConfirmed(userId: number) {
+    return this.userRepository.update(
+      { id: userId },
+      {
+        isPhoneNumberConfirmed: true,
+      },
+    );
+  }
+
   async removeRefreshToken(userId: number) {
     return this.userRepository.update(userId, {
       currentHashedRefreshToken: null,
