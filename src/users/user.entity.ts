@@ -82,6 +82,9 @@ class User {
 
   @Column({ nullable: true })
   public monthlySubscriptionStatus?: string;
+
+  @Column({ default: false })
+  public isEmailConfirmed: boolean;
 }
 
 export default User;

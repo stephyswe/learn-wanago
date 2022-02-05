@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { Response } from 'express';
 import { RegisterDto, RequestWithUser } from './auth.dto';
@@ -6,17 +6,22 @@ import { LocalAuthGuard } from './guard/local.guard';
 import { JwtAuthGuard } from './guard/jwt.guard';
 import { UsersService } from '../users/users.service';
 import JwtRefreshGuard from './guard/jwt-refresh.guard';
+import { EmailConfirmationService } from '../emailConfirmation/emailConfirmation.service';
 
 @Controller('authentication')
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
     private readonly userService: UsersService,
+    private readonly emailConfirmationService: EmailConfirmationService,
   ) {}
 
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
-    return this.authenticationService.register(registrationData);
+    const user = await this.authenticationService.register(registrationData);
+    console.log('here?');
+    await this.emailConfirmationService.sendVerificationLink(registrationData.email);
+    return user;
   }
 
   @Post('login')
@@ -61,5 +66,17 @@ export class AuthenticationController {
 
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return request.user;
+  }
+
+  @Delete('users/:id')
+  async delete(@Param('id') userId: any) {
+    const del = await this.userService.deleteUser(+userId);
+    return del;
+  }
+
+  @Get('users')
+  async listUsers() {
+    const del = await this.userService.listUsers();
+    return del;
   }
 }

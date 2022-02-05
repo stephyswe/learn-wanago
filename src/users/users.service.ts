@@ -26,13 +26,8 @@ export class UsersService {
     private stripeService: StripeService,
   ) {}
 
-  async updateMonthlySubscriptionStatus(
-    stripeCustomerId: string, monthlySubscriptionStatus: string
-  ) {
-    return this.userRepository.update(
-      { stripeCustomerId },
-      { monthlySubscriptionStatus }
-    );
+  async updateMonthlySubscriptionStatus(stripeCustomerId: string, monthlySubscriptionStatus: string) {
+    return this.userRepository.update({ stripeCustomerId }, { monthlySubscriptionStatus });
   }
 
   async getByEmail(email: string): Promise<User> {
@@ -81,6 +76,15 @@ export class UsersService {
     if (isRefreshTokenMatching) {
       return user;
     }
+  }
+
+  async markEmailAsConfirmed(email: string) {
+    return this.userRepository.update(
+      { email },
+      {
+        isEmailConfirmed: true,
+      },
+    );
   }
 
   async removeRefreshToken(userId: number) {
@@ -166,5 +170,15 @@ export class UsersService {
       );
     }
     throw new NotFoundException('User with this id does not exist');
+  }
+
+  async deleteUser(userId: number) {
+    await this.userRepository.delete({ id: userId });
+    return `user with id: ${userId} deleted`;
+  }
+
+  async listUsers() {
+    const users = await this.userRepository.find();
+    return users;
   }
 }

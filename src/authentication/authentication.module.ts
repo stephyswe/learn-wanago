@@ -12,23 +12,10 @@ import { AuthenticationResolver } from './authentication.resolver';
 import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthentication.controller';
 import { TwoFactorAuthenticationService } from './twoFactor/twoFactorAuthentication.service';
 import { JwtTwoFactorStrategy } from './strategy/jwt-two-factor.strategy';
+import { EmailConfirmationModule } from '../emailConfirmation/emailConfirmation.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    PassportModule,
-    ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),
-        signOptions: {
-          expiresIn: `${configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}s`,
-        },
-      }),
-    }),
-  ],
+  imports: [UsersModule, PassportModule, ConfigModule, EmailConfirmationModule, JwtModule.register({})],
   controllers: [AuthenticationController, TwoFactorAuthenticationController],
   providers: [
     AuthenticationService,

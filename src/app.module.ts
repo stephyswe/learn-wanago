@@ -23,6 +23,7 @@ import { ChargeModule } from './charge/charge.module';
 import { CreditCardsModule } from './credit-cards/creditCards.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { StripeWebhookModule } from './stripeWebhook/stripeWebhook.module';
+import { EmailConfirmationModule } from './emailConfirmation/emailConfirmation.module';
 
 @Module({
   imports: [
@@ -71,7 +72,8 @@ import { StripeWebhookModule } from './stripeWebhook/stripeWebhook.module';
     ChargeModule,
     CreditCardsModule,
     SubscriptionsModule,
-    StripeWebhookModule
+    StripeWebhookModule,
+    EmailConfirmationModule
   ],
   providers: [Timestamp],
 })
