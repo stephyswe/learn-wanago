@@ -5,17 +5,21 @@ import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'aws-sdk';
 import rawBodyMiddleware from './utils/rawBody.middleware';
+import CustomLogger from './logger/customLogger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  // app.useLogger(app.get(CustomLogger));
   const configService = app.get(ConfigService);
   app.enableCors({
     origin: configService.get('FRONTEND_URL'),
-    credentials: true
+    credentials: true,
   });
 
   app.use(rawBodyMiddleware());
-  
+
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
 

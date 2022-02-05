@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -26,6 +26,8 @@ import { StripeWebhookModule } from './stripeWebhook/stripeWebhook.module';
 import { EmailConfirmationModule } from './emailConfirmation/emailConfirmation.module';
 import { SmsModule } from './sms/sms.module';
 import { GoogleAuthenticationModule } from './googleAuthentication/googleAuthentication.module';
+import LogsMiddleware from './utils/logs.middleware';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -77,8 +79,13 @@ import { GoogleAuthenticationModule } from './googleAuthentication/googleAuthent
     StripeWebhookModule,
     EmailConfirmationModule,
     SmsModule,
-    GoogleAuthenticationModule
+    GoogleAuthenticationModule,
+    LoggerModule,
   ],
   providers: [Timestamp],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LogsMiddleware).forRoutes('*');
+  }
+}
