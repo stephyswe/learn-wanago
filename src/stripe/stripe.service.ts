@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { stringify } from 'querystring';
 import Stripe from 'stripe';
 import StripeError from '../utils/stripeError.enum';
 
@@ -12,6 +11,12 @@ export default class StripeService {
     this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
       apiVersion: '2020-08-27',
     });
+  }
+
+  public async constructEventFromPayload(signature: string, payload: Buffer) {
+    const webhookSecret = this.configService.get('STRIPE_WEBHOOK_SECRET');
+
+    return this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   }
 
   public async createCustomer(name: string, email: string) {

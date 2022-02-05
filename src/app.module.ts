@@ -22,6 +22,7 @@ import { BullModule } from '@nestjs/bull';
 import { ChargeModule } from './charge/charge.module';
 import { CreditCardsModule } from './credit-cards/creditCards.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { StripeWebhookModule } from './stripeWebhook/stripeWebhook.module';
 
 @Module({
   imports: [
@@ -69,7 +70,8 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     OptimizeModule,
     ChargeModule,
     CreditCardsModule,
-    SubscriptionsModule
+    SubscriptionsModule,
+    StripeWebhookModule
   ],
   providers: [Timestamp],
 })

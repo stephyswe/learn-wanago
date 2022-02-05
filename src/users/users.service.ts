@@ -13,6 +13,7 @@ import { FilesService } from '../files/files.service';
 import { PrivateFilesService } from '../privateFiles/privateFiles.service';
 import * as bcryptjs from 'bcryptjs';
 import StripeService from '../stripe/stripe.service';
+import PostgresErrorCode from '../utils/postgresError.enum';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,15 @@ export class UsersService {
     private connection: Connection,
     private stripeService: StripeService,
   ) {}
+
+  async updateMonthlySubscriptionStatus(
+    stripeCustomerId: string, monthlySubscriptionStatus: string
+  ) {
+    return this.userRepository.update(
+      { stripeCustomerId },
+      { monthlySubscriptionStatus }
+    );
+  }
 
   async getByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ email });
@@ -50,7 +60,7 @@ export class UsersService {
       await this.userRepository.save(user);
       return user;
     } catch (error) {
-      if (error?.code === '23505') {
+      if (error?.code === PostgresErrorCode.UniqueViolation) {
         throw new NotAcceptableException('User with that email already exists');
       }
     }
