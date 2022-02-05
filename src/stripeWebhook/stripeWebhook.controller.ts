@@ -12,7 +12,6 @@ export default class StripeWebhookController {
 
   @Post()
   async handleIncomingEvents(@Headers('stripe-signature') signature: string, @Req() request: RequestWithRawBody) {
-    console.log('s', signature);
     if (!signature) {
       throw new BadRequestException('Missing stripe-signature header');
     }

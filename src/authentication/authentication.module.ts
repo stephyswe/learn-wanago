@@ -26,5 +26,6 @@ import { EmailConfirmationModule } from '../emailConfirmation/emailConfirmation.
     TwoFactorAuthenticationService,
     JwtTwoFactorStrategy,
   ],
+  exports: [AuthenticationService],
 })
 export class AuthModule {}

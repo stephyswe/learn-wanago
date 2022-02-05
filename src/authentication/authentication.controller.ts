@@ -19,7 +19,6 @@ export class AuthenticationController {
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
     const user = await this.authenticationService.register(registrationData);
-    console.log('here?');
     await this.emailConfirmationService.sendVerificationLink(registrationData.email);
     return user;
   }

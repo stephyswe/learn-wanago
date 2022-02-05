@@ -37,8 +37,6 @@ export default class SmsService {
   async sendMessage(receiverPhoneNumber: string, message: string) {
     const senderPhoneNumber = this.configService.get('TWILIO_SENDER_PHONE_NUMBER');
 
-    console.log('work?', senderPhoneNumber);
-
     return this.twilioClient.messages.create({ body: message, from: senderPhoneNumber, to: receiverPhoneNumber });
   }
 }

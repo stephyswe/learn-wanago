@@ -80,7 +80,6 @@ export default class StripeService {
         ],
         expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
       });
-      console.log('sum', sum);
       return sum;
     } catch (error) {
       if (error?.code === StripeError.ResourceMissing) {

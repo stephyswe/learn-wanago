@@ -25,6 +25,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { StripeWebhookModule } from './stripeWebhook/stripeWebhook.module';
 import { EmailConfirmationModule } from './emailConfirmation/emailConfirmation.module';
 import { SmsModule } from './sms/sms.module';
+import { GoogleAuthenticationModule } from './googleAuthentication/googleAuthentication.module';
 
 @Module({
   imports: [
@@ -75,7 +76,8 @@ import { SmsModule } from './sms/sms.module';
     SubscriptionsModule,
     StripeWebhookModule,
     EmailConfirmationModule,
-    SmsModule
+    SmsModule,
+    GoogleAuthenticationModule
   ],
   providers: [Timestamp],
 })

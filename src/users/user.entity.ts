@@ -30,15 +30,18 @@ class User {
   @Column({ unique: true })
   public email: string;
 
-  @Column()
+  @Column({ nullable: true })
   public phoneNumber: string;
 
   @Column()
   public name: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Exclude()
   public password: string;
+
+  @Column({ default: false })
+  public isRegisteredWithGoogle: boolean;
 
   @Column()
   @CreateDateColumn()
