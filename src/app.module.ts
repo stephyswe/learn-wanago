@@ -28,6 +28,7 @@ import { SmsModule } from './sms/sms.module';
 import { GoogleAuthenticationModule } from './googleAuthentication/googleAuthentication.module';
 import LogsMiddleware from './utils/logs.middleware';
 import { LoggerModule } from './logger/logger.module';
+import HealthModule from './health/health.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { LoggerModule } from './logger/logger.module';
     SmsModule,
     GoogleAuthenticationModule,
     LoggerModule,
+    HealthModule
   ],
   providers: [Timestamp],
 })

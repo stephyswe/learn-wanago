@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostsResolver } from './posts.resolver';
 import { UsersModule } from '../users/users.module';
 import PostsLoaders from './loaders/posts.loaders';
+import { PostsHealthIndicator } from './posts.health';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import PostsLoaders from './loaders/posts.loaders';
     UsersModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsSearchService, PostsResolver, PostsLoaders],
+  providers: [PostsService, PostsSearchService, PostsResolver, PostsLoaders, PostsHealthIndicator],
+  exports: [PostsHealthIndicator]
 })
 export class PostsModule {}
