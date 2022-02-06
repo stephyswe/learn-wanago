@@ -53,6 +53,31 @@ export class PrivateFilesService {
     throw new NotFoundException();
   }
 
+  /**
+   * TODO! Cannot find file.
+   * @param key 
+   */
+  public async deletePrivateFile(key: string) {
+    const s3 = new S3();
+
+    const params = {
+      Bucket: 'nestjs-indie-series-private-bucket',
+      Key: '1aa52370-f3ff-48d8-86f8-e8780335d6d7-20190826_161356',
+    };
+    try {
+      await s3.headObject(params).promise();
+      console.log('File Found in S3');
+      try {
+        await s3.deleteObject(params).promise();
+        console.log('file deleted Successfully');
+      } catch (err) {
+        console.log('ERROR in file Deleting : ' + JSON.stringify(err));
+      }
+    } catch (err) {
+      console.log('File not Found ERROR : ' + err.code);
+    }
+  }
+
   public async generatePresignedUrl(key: string) {
     const s3 = new S3();
 

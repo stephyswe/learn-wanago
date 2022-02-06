@@ -17,6 +17,14 @@ export class UsersController {
     return this.usersService.addAvatar(request.user.id, file.buffer, file.originalname);
   }
 
+  
+  @Post('background')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async addPublicFile(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File) {
+    return this.usersService.addPublicFile(request.user.id, file.buffer, file.originalname);
+  }
+
   @Post('files')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
@@ -41,5 +49,17 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   async deleteAvatar(@Req() request: RequestWithUser) {
     return this.usersService.deleteAvatar(request.user.id);
+  }
+
+  @Delete('files/:id')
+  @UseGuards(JwtAuthGuard)
+  async deletePrivateFile(@Req() request: RequestWithUser, @Param() { id }: FindOneParams) {
+    return this.usersService.deletePrivateFile(request.user.id, id);
+  }
+
+  @Delete('background')
+  @UseGuards(JwtAuthGuard)
+  async deletePublicFile(@Req() request: RequestWithUser) {
+    return this.usersService.deletePublicFileBackground(request.user.id);
   }
 }

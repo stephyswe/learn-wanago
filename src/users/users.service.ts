@@ -14,6 +14,7 @@ import { PrivateFilesService } from '../privateFiles/privateFiles.service';
 import * as bcryptjs from 'bcryptjs';
 import StripeService from '../stripe/stripe.service';
 import PostgresErrorCode from '../utils/postgresError.enum';
+import DatabaseFilesService from '../databaseFiles/databaseFiles.service';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +22,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly filesService: FilesService,
+    private readonly databaseFilesService: DatabaseFilesService,
     private readonly privateFilesService: PrivateFilesService,
     private connection: Connection,
     private stripeService: StripeService,
@@ -66,6 +68,46 @@ export class UsersService {
     await this.userRepository.update(userId, {
       currentHashedRefreshToken,
     });
+  }
+
+  async addPublicFile(userId: number, imageBuffer: Buffer, filename: string) {
+    const user = await this.getById(userId);
+    if (user.background) {
+      await this.deleteUserBackground(user);
+    }
+    const background = await this.filesService.uploadPublicFile(imageBuffer, filename);
+    await this.userRepository.update(userId, {
+      ...user,
+      background,
+    });
+    return background;
+  }
+
+  async deletePublicFileBackground(userId: number) {
+    const user = await this.getById(userId);
+    await this.deleteUserBackground(user);
+  }
+
+  async deleteUserBackground(user: User) {
+    const queryRunner = this.connection.createQueryRunner();
+    const fileId = user.background?.id;
+    if (fileId) {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try {
+        await this.userRepository.update(user.id, {
+          ...user,
+          background: null,
+        });
+        await this.filesService.deletePublicFileWithQueryRunner(fileId, queryRunner);
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw new InternalServerErrorException();
+      } finally {
+        await queryRunner.release();
+      }
+    }
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
@@ -121,23 +163,44 @@ export class UsersService {
       email,
       name,
       isRegisteredWithGoogle: true,
-      stripeCustomerId: stripeCustomer.id
+      stripeCustomerId: stripeCustomer.id,
     });
     await this.userRepository.save(newUser);
     return newUser;
   }
 
   async addAvatar(userId: number, imageBuffer: Buffer, filename: string) {
-    const user = await this.getById(userId);
-    if (user.avatar) {
-      await this.deleteUserAvatar(user);
+    const queryRunner = this.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await queryRunner.manager.findOne(User, userId);
+      const currentAvatarId = user.avatarId;
+      const avatar = await this.databaseFilesService.uploadDatabaseFileWithQueryRunner(
+        imageBuffer,
+        filename,
+        queryRunner,
+      );
+
+      await queryRunner.manager.update(User, userId, {
+        avatarId: avatar.id,
+      });
+
+      if (currentAvatarId) {
+        await this.databaseFilesService.deleteFileWithQueryRunner(currentAvatarId, queryRunner);
+      }
+
+      await queryRunner.commitTransaction();
+
+      return avatar;
+    } catch {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException();
+    } finally {
+      await queryRunner.release();
     }
-    const avatar = await this.filesService.uploadPublicFile(imageBuffer, filename);
-    await this.userRepository.update(userId, {
-      ...user,
-      avatar,
-    });
-    return avatar;
   }
 
   async deleteAvatar(userId: number) {
@@ -178,11 +241,22 @@ export class UsersService {
     throw new UnauthorizedException();
   }
 
+  async deletePrivateFile(userId: number, fileId: any) {
+    const files = await this.getAllPrivateFiles(userId);
+    const key = files[fileId].key;
+    const url = files[fileId].url;
+
+    // const bucketUrl = url.split('/')[2];
+
+    return this.privateFilesService.deletePrivateFile(key);
+  }
+
   async getAllPrivateFiles(userId: number) {
     const userWithFiles = await this.userRepository.findOne({ id: userId }, { relations: ['files'] });
     if (userWithFiles) {
       return Promise.all(
         userWithFiles.files.map(async (file) => {
+          console.log('file', file);
           const url = await this.privateFilesService.generatePresignedUrl(file.key);
           return {
             ...file,

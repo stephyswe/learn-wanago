@@ -4,13 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  Index,
 } from 'typeorm';
+import DatabaseFile from '../databaseFiles/databaseFile.entity';
 import PublicFile from '../files/publicFile.entity';
 import Post from '../posts/post.entity';
 import PrivateFile from '../privateFiles/privateFile.entity';
@@ -61,12 +60,24 @@ class User {
   @OneToMany(() => Post, (post: Post) => post.author)
   public posts?: Post[];
 
+  @JoinColumn({ name: 'avatarId' })
+  @OneToOne(
+    () => DatabaseFile,
+    {
+      nullable: true
+    }
+  )
+  public avatar?: DatabaseFile;
+
+  @Column({ nullable: true })
+  public avatarId?: number;
+
   @JoinColumn()
   @OneToOne(() => PublicFile, {
     eager: true,
     nullable: true,
   })
-  public avatar?: PublicFile;
+  public background?: PublicFile;
 
   @OneToMany(() => PrivateFile, (file: PrivateFile) => file.owner)
   public files?: PrivateFile[];

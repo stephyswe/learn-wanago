@@ -29,6 +29,8 @@ import { GoogleAuthenticationModule } from './googleAuthentication/googleAuthent
 import LogsMiddleware from './utils/logs.middleware';
 import { LoggerModule } from './logger/logger.module';
 import HealthModule from './health/health.module';
+import DatabaseFile from './databaseFiles/databaseFile.entity';
+import { DatabaseFilesModule } from './databaseFiles/databaseFiles.module';
 
 @Module({
   imports: [
@@ -82,7 +84,8 @@ import HealthModule from './health/health.module';
     SmsModule,
     GoogleAuthenticationModule,
     LoggerModule,
-    HealthModule
+    HealthModule,
+    DatabaseFilesModule
   ],
   providers: [Timestamp],
 })
