@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "documentation:serve": "npx @compodoc/compodoc -p tsconfig.json --serve",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:all": "docker-compose stop pgindie && docker-compose rm -f pgindie && docker-compose up -d pgindie && npm run start:dev",
@@ -22,6 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@compodoc/compodoc": "^1.1.18",
     "@elastic/elasticsearch": "^7.16.0",
     "@grpc/grpc-js": "^1.5.3",
     "@grpc/proto-loader": "^0.6.9",
