@@ -46,4 +46,9 @@ export default class CategoriesController {
   async deleteCategory(@Param() { id }: FindOneParams) {
     return this.categoriesService.deleteCategory(Number(id));
   }
+
+  @Get('restore/:id')
+  async restoreDeletedCategory(@Param() { id }: FindOneParams) {
+    return this.categoriesService.restoreDeletedCategory(Number(id));
+  }
 }
