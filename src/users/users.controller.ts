@@ -11,17 +11,60 @@ import {
   UseGuards,
   UseInterceptors,
   BadRequestException,
+  ParseIntPipe,
+  NotFoundException,
+  StreamableFile,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../authentication/guard/jwt.guard';
 import { RequestWithUser } from '../authentication/auth.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express, Response } from 'express';
+import { Response, Request } from 'express';
 import FindOneParams from '../utils/findOneParams';
 import LocalFilesInterceptor from '../localFIles/localFiles.interceptor';
+import LocalFilesService from '../localFIles/localFiles.service';
+import { join } from 'path';
+import * as etag from 'etag';
+import * as filesystem from 'fs';
+import * as util from 'util';
+
+const readFile = util.promisify(filesystem.readFile);
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService, private readonly localFilesService: LocalFilesService) {}
+
+  @Get(':userId/avatar')
+  async getAvatar(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
+  ) {
+    const user = await this.usersService.getById(userId);
+    const fileId = user.avatarId;
+    if (!fileId) {
+      throw new NotFoundException();
+    }
+    const fileMetadata = await this.localFilesService.getFileById(user.avatarId);
+
+    const pathOnDisk = join(process.cwd(), fileMetadata.path);
+
+    const file = await readFile(pathOnDisk);
+
+    const tag = `W/"file-id-${fileId}"`;
+
+    response.set({
+      'Content-Disposition': `inline; filename="${fileMetadata.filename}"`,
+      'Content-Type': fileMetadata.mimetype,
+      ETag: tag,
+    });
+
+    if (request.headers['if-none-match'] === tag) {
+      response.status(304);
+      return;
+    }
+
+    return new StreamableFile(file);
+  }
 
   @Post('avatar')
   @UseGuards(JwtAuthGuard)
