@@ -14,12 +14,7 @@ import PublicFile from '../files/publicFile.entity';
 import Post from '../posts/post.entity';
 import PrivateFile from '../privateFiles/privateFile.entity';
 import { Address } from './address.entity';
-
-export enum UserRole {
-  ADMIN = 'admin',
-  EDITOR = 'editor',
-  USER = 'user',
-}
+import Role from './role.enum';
 
 @Entity()
 class User {
@@ -28,6 +23,14 @@ class User {
 
   @Column({ unique: true })
   public email: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    array: true,
+    default: [Role.User],
+  })
+  public roles: Role[];
 
   @Column({ nullable: true })
   public phoneNumber: string;
@@ -61,12 +64,9 @@ class User {
   public posts?: Post[];
 
   @JoinColumn({ name: 'avatarId' })
-  @OneToOne(
-    () => DatabaseFile,
-    {
-      nullable: true
-    }
-  )
+  @OneToOne(() => DatabaseFile, {
+    nullable: true,
+  })
   public avatar?: DatabaseFile;
 
   @Column({ nullable: true })

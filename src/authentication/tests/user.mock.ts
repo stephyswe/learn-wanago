@@ -1,5 +1,6 @@
 import User from '../../users/user.entity';
 import mockdate from 'mockdate';
+import Role from '../../users/role.enum';
 
 mockdate.set('2000-11-22');
 
@@ -22,6 +23,7 @@ const mockedUser: User = {
   isEmailConfirmed: false,
   isPhoneNumberConfirmed: false,
   isRegisteredWithGoogle: false,
+  roles: [Role.User],
 };
 
 export default mockedUser;
