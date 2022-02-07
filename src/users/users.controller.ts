@@ -1,10 +1,23 @@
 import { UsersService } from './users.service';
-import { Controller, Get, Param, Post, Delete, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Delete,
+  Req,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../authentication/guard/jwt.guard';
 import { RequestWithUser } from '../authentication/auth.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express, Response } from 'express';
 import FindOneParams from '../utils/findOneParams';
+import LocalFilesInterceptor from '../localFIles/localFiles.interceptor';
 
 @Controller('users')
 export class UsersController {
@@ -12,12 +25,29 @@ export class UsersController {
 
   @Post('avatar')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    LocalFilesInterceptor({
+      fieldName: 'file',
+      path: '/avatars',
+      fileFilter: (request, file, callback) => {
+        if (!file.mimetype.includes('image')) {
+          return callback(new BadRequestException('Provide a valid image'), false);
+        }
+        callback(null, true);
+      },
+      limits: {
+        fileSize: Math.pow(1024, 2), // 1MB
+      },
+    }),
+  )
   async addAvatar(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File) {
-    return this.usersService.addAvatar(request.user.id, file.buffer, file.originalname);
+    return this.usersService.addAvatar(request.user.id, {
+      path: file.path,
+      filename: file.originalname,
+      mimetype: file.mimetype,
+    });
   }
 
-  
   @Post('background')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))

@@ -15,6 +15,7 @@ import * as bcryptjs from 'bcryptjs';
 import StripeService from '../stripe/stripe.service';
 import PostgresErrorCode from '../utils/postgresError.enum';
 import DatabaseFilesService from '../databaseFiles/databaseFiles.service';
+import LocalFilesService from '../localFIles/localFiles.service';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
     private readonly filesService: FilesService,
     private readonly databaseFilesService: DatabaseFilesService,
     private readonly privateFilesService: PrivateFilesService,
+    private localFilesService: LocalFilesService,
     private connection: Connection,
     private stripeService: StripeService,
   ) {}
@@ -169,38 +171,11 @@ export class UsersService {
     return newUser;
   }
 
-  async addAvatar(userId: number, imageBuffer: Buffer, filename: string) {
-    const queryRunner = this.connection.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const user = await queryRunner.manager.findOne(User, userId);
-      const currentAvatarId = user.avatarId;
-      const avatar = await this.databaseFilesService.uploadDatabaseFileWithQueryRunner(
-        imageBuffer,
-        filename,
-        queryRunner,
-      );
-
-      await queryRunner.manager.update(User, userId, {
-        avatarId: avatar.id,
-      });
-
-      if (currentAvatarId) {
-        await this.databaseFilesService.deleteFileWithQueryRunner(currentAvatarId, queryRunner);
-      }
-
-      await queryRunner.commitTransaction();
-
-      return avatar;
-    } catch {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException();
-    } finally {
-      await queryRunner.release();
-    }
+  async addAvatar(userId: number, fileData: LocalFileDto) {
+    const avatar = await this.localFilesService.saveLocalFileData(fileData);
+    await this.userRepository.update(userId, {
+      avatarId: avatar.id
+    })
   }
 
   async deleteAvatar(userId: number) {

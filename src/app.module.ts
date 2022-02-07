@@ -31,6 +31,7 @@ import { LoggerModule } from './logger/logger.module';
 import HealthModule from './health/health.module';
 import DatabaseFile from './databaseFiles/databaseFile.entity';
 import { DatabaseFilesModule } from './databaseFiles/databaseFiles.module';
+import { LocalFilesModule } from './localFIles/localFiles.module';
 
 @Module({
   imports: [
@@ -85,7 +86,8 @@ import { DatabaseFilesModule } from './databaseFiles/databaseFiles.module';
     GoogleAuthenticationModule,
     LoggerModule,
     HealthModule,
-    DatabaseFilesModule
+    DatabaseFilesModule,
+    LocalFilesModule
   ],
   providers: [Timestamp],
 })

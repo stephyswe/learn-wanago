@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import DatabaseFile from '../databaseFiles/databaseFile.entity';
 import PublicFile from '../files/publicFile.entity';
+import LocalFile from '../localFIles/localFile.entity';
 import Post from '../posts/post.entity';
 import PrivateFile from '../privateFiles/privateFile.entity';
 import { Address } from './address.entity';
@@ -64,10 +65,10 @@ class User {
   public posts?: Post[];
 
   @JoinColumn({ name: 'avatarId' })
-  @OneToOne(() => DatabaseFile, {
+  @OneToOne(() => LocalFile, {
     nullable: true,
   })
-  public avatar?: DatabaseFile;
+  public avatar?: LocalFile;
 
   @Column({ nullable: true })
   public avatarId?: number;
